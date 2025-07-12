@@ -1,0 +1,31 @@
+{% extends 'templates/base.html' %}
+
+{% block title %} To-Do List {% endblock %}
+
+{% block content %}
+
+<h1 style = 'font-size:80px; color:yellow'> Welcome to LeBron To-Do List! </h1>
+
+{% if user.is_authenticated %}
+<h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
+<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
+    <p style = 'font-size:30px; color:yellow; margin-left:20px; margin-bottom:20px;'>
+    Total Tasks: {{ total_tasks }}
+    </p>
+</div>
+<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
+    <p style = 'font-size:30px; color:yellow; margin-left:20px;'>
+    Tasks Completed: {{ tasks_completed }}
+    </p>
+</div>
+<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
+    <p style = 'font-size:30px; color:yellow; margin-left:20px;'>
+    Tasks Incomplete: {{ tasks_incomplete }}
+    </p>
+</div>
+{% else %}
+<h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
+<p style = 'font-size:30px; color:yellow'> Please log in to view your tasks progress. </p>
+{% endif %}
+
+{%endblock%}

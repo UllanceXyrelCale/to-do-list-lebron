@@ -1,0 +1,33 @@
+{% extends 'templates/base.html' %}
+{%load static%}
+
+{% block title %}Add a Task{% endblock %}
+
+{% block content %}
+<h1 style='font-size:40px; color:yellow'>Todos</h1>
+
+<a style = 'color:yellow;' href="{% url 'add_todos' %}"><img src='{%static "Add Tasks Button.png" %}'width=25 height=25> Add Tasks </a>
+
+<ul style='font-size:18px; color:yellow;'>
+    {% for todo in todos %}
+    <li>
+      {%if todo.completed %}
+      <a href="{% url 'incomplete-todo' todo.id %}">
+      <img src='{% static "Lebron Happy.jpg" %}' width=75 height=50> 
+      </a>
+
+      {%else%} 
+      <a href="{% url 'complete-todo' todo.id %}">
+      <img src='{% static "Lebron Sad.jpg" %}' width=75 height=50> 
+      </a>
+
+      {%endif%}
+      {{todo.title}} 
+      <a href="{% url 'remove-todo' todo.id %}">
+      <img src='{% static "Delete Task Button.png" %}' width=20px height=20px title='Remove Task'>
+      </a>
+      <p style = 'color:rgb(212, 72, 255); font-size:16px;'>{{todo.description}}</p>
+    </li>
+    {%endfor%}
+</ul>
+{%endblock%}
