@@ -1,0 +1,16 @@
+{%extends "templates/base.html"%}
+
+{# Register Form #}
+{# This is the form that will be used to register a new user #}
+{# It will be passed in from the view #}
+
+{% block title %}Register a New User{% endblock %}
+
+{% block content %}
+<form action = "/accounts/register/" method = "post" style="color:yellow;">
+    <!-- The CSRF token is required for security reasons -->
+    {% csrf_token %}
+    {{ form }}
+    <button>Submit</button>
+</form>
+{% endblock %}

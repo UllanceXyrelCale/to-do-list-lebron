@@ -1,0 +1,34 @@
+{% extends 'templates/base.html' %}
+{%load static%}
+
+<head>
+    <link rel='stylesheet' href="{% static 'css/global_style.css' %}">
+</head>
+
+{% block title %}Add a Task{% endblock %}
+
+{% block content %}
+
+<h1 style='font-size:40px; color:yellow'>Add a Classification</h1>
+
+<form method='POST' style= 'color:yellow;'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type='submit'> Add Classification </button>
+</form>
+
+<div style='margin-top:20px; color:rgba(148, 136, 136, 1);;'>
+<h2 style='font-size:30px; color:yellow;'>Current Classifications</h2>
+<ul style='font-size:18px; color:yellow;'>
+    {% for cls in classifications %}
+    <li>
+      {{cls.name}} 
+      <a href="{% url 'remove-classification' cls.id%}">
+      <img src='{% static "Delete Task Button.png" %}' width=20px height=20px title='Remove Task'>
+      </a>
+    </li>
+    {%endfor%}
+</ul>
+</div>
+
+{%endblock%}

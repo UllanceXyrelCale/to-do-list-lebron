@@ -1,0 +1,49 @@
+{% extends 'templates/base.html' %}
+{%load static%}
+
+{% block title %}Add a Task{% endblock %}
+
+{% block content %}
+<h1 style='font-size:40px; color:yellow'>{{current_classification}}</h1>
+<a style = 'color:yellow;' href="{% url 'add-classifications' %}"><img src='{%static "Add Tasks Button.png" %}'width=25 height=25> Edit Classification </a>
+
+
+<form method="get" action="{% url 'todos' %}">
+    <label for="classification" style='color:yellow; font-size:20px;'>Select Classification:</label>
+    <select name="classification" id="classification" onchange="this.form.submit()">
+      <option value="">View All</option>
+        {% for cls in classification %}
+            <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
+                {{ cls.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<a style = 'color:yellow;' href="{% url 'add-todos' %}"><img src='{%static "Add Tasks Button.png" %}'width=25 height=25> Add Tasks </a>
+
+<div style="width:800px; min-height:500px; background-color: #878787ff; border:5px solid #636363ff; border-radius:50px">
+    <ul style='font-size:18px; color:yellow; margin-top:20px'>
+        {% for todo in todos %}
+        <li>
+        {%if todo.completed %}
+        <a href="{% url 'incomplete-todo' todo.id %}">
+        <img src='{% static "Lebron Happy.jpg" %}' width=75 height=50> 
+        </a>
+
+        {%else%} 
+        <a href="{% url 'complete-todo' todo.id %}">
+        <img src='{% static "Lebron Sad.jpg" %}' width=75 height=50> 
+        </a>
+
+        {%endif%}
+        {{todo.title}} 
+        <a href="{% url 'remove-todo' todo.id %}">
+        <img src='{% static "Delete Task Button.png" %}' width=20px height=20px title='Remove Task'>
+        </a>
+        <p style = 'color:rgba(238, 184, 255, 1); font-size:16px;'>{{todo.description}}</p>
+        </li>
+        {%endfor%}
+    </ul>
+</div>
+{%endblock%}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{%load static%}
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h1 style = 'color:yellow;'> {% block title %} To-Do List App {% endblock %} </h1>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"  rel="stylesheet" />
+    <link rel='stylesheet' href="{% static 'css/global_style.css' %}">
+  </head>
+  <body style="background-color:rgb(69, 64, 64);">
+    <nav class="navbar navbar-expand-lg" style="background-color:rgba(88, 88, 88, 1);">
+      <a class="navbar-brand" href="{% url 'home' %}" style = 'color:yellow;' title = 'Home'><img src='{%static "Home Button.png" %}'width=35 height=35></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'todos' %}" style = 'color:yellow !important;' title = 'Tasks'><img src='{%static "Tasks Button.png" %}'width=25 height=25></a>
+            </li>
+            <li class="nav-item">
+              <form method = 'post' action = "{% url 'logout' %}">
+                {% csrf_token %}
+                <button class='logout 'type='submit' title = 'Logout'> <img src='{%static "Logout Button.png" %}' width=30 height=30></button>
+              </form>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}" style = 'color:yellow;' title = 'Account Registration'><img src='{%static "User Button.png" %}'width=25 height=25></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}" title = 'Login'> <img src='{%static "Login Button.png" %}' width=25 height=25></a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <div class="container">{% block content %} {% endblock %}</div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" ></script>
+  </body>
+</html>

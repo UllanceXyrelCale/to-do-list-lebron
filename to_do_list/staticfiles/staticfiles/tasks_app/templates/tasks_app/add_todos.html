@@ -1,0 +1,16 @@
+{% extends 'templates/base.html' %}
+
+{%load static%}
+
+{% block title %} Add a Task {% endblock %}
+
+{% block content %}
+<h1 style='font-size:40px; color:yellow'>Add a Task</h1>
+
+<form method='POST' style= 'color:yellow;'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type='submit'> Add Task </button>
+</form>
+
+{% endblock %}
