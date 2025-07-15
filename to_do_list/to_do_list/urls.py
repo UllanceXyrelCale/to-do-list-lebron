@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from decouple import config
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(config('admin_url'), admin.site.urls),
     path('', include('tasks_app.urls')),
     path('accounts/', include('accounts_app.urls'))
 ]

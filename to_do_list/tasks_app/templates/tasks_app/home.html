@@ -8,6 +8,17 @@
 
 {% if user.is_authenticated %}
 <h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
+<form method='get' action="{% url 'home' %}"> 
+    <label for='classification' style='color:yellow; font-size:20px;'> Specify Classification </label>
+    <select name='classification' id='classification' onchange='this.form.submit()'>
+        <option value="">View All</option>
+        {% for cls in classification %}
+            <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
+                {{ cls.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
 <div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
     <p style = 'font-size:30px; color:yellow; margin-left:20px; margin-bottom:20px;'>
     Total Tasks: {{ total_tasks }}
@@ -26,6 +37,7 @@
 {% else %}
 <h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
 <p style = 'font-size:30px; color:yellow'> Please log in to view your tasks progress. </p>
+
 {% endif %}
 
 {%endblock%}

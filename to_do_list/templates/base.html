@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{%load static%}
+{% load static %}
 
 <html lang="en">
   <head>
@@ -10,7 +10,7 @@
     <link rel='stylesheet' href="{% static 'css/global_style.css' %}">
   </head>
   <body style="background-color:rgb(69, 64, 64);">
-    <nav class="navbar navbar-expand-lg" style="background-color:rgb(50, 0, 63);">
+    <nav class="navbar navbar-expand-lg" style="background-color:rgba(88, 88, 88, 1);">
       <a class="navbar-brand" href="{% url 'home' %}" style = 'color:yellow;' title = 'Home'><img src='{%static "Home Button.png" %}'width=35 height=35></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -22,7 +22,7 @@
             <li class="nav-item">
               <form method = 'post' action = "{% url 'logout' %}">
                 {% csrf_token %}
-                <button type='submit' title = 'Logout'> <img src='{%static "Logout Button.png" %}' width=30 height=30></button>
+                <button class='logout 'type='submit' title = 'Logout'> <img src='{%static "Logout Button.png" %}' width=30 height=30></button>
               </form>
             </li>
             {% else %}

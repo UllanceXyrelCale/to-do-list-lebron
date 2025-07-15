@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action = "/accounts/login/" method = "post">
+<form action = "/accounts/login/" method = "post" style="color:yellow;">
     {% csrf_token %}
     {{ form }}
     <button type="submit">Login</button>
