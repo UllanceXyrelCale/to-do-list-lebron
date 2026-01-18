@@ -1,16 +1,113 @@
 {% extends 'templates/base.html' %}
-
-{%load static%}
+{% load static %}
 
 {% block title %} Add a Task {% endblock %}
 
 {% block content %}
-<h1 style='font-size:40px; color:yellow'>Add a Task</h1>
 
-<form method='POST' style= 'color:yellow;'>
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type='submit'> Add Task </button>
-</form>
+<style>
+    :root {
+        --yellow: #f5c518;
+        --dark-bg: #0f0f0f;
+        --card-bg: #1c1c1c;
+        --border-dark: #2a2a2a;
+        --text-main: #eaeaea;
+        --text-muted: #9a9a9a;
+    }
+
+    .page-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 30px;
+    }
+
+    .page-title span {
+        color: var(--yellow);
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid var(--border-dark);
+    }
+
+    form p {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        font-size: 16px;
+    }
+
+    form label {
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+
+    form input,
+    form textarea,
+    form select {
+        padding: 10px 12px;
+        background: #111;
+        color: var(--text-main);
+        border-radius: 8px;
+        border: 1px solid var(--border-dark);
+        font-size: 15px;
+    }
+
+    form textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    form input:focus,
+    form textarea:focus,
+    form select:focus {
+        outline: none;
+        border-color: var(--yellow);
+    }
+
+    .submit-btn {
+        margin-top: 10px;
+        padding: 12px;
+        width: 100%;
+        background: var(--yellow);
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 197, 24, 0.35);
+    }
+</style>
+
+<div class="page-container">
+    <h1 class="page-title">
+        Add a <span>Task</span>
+    </h1>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Add Task</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

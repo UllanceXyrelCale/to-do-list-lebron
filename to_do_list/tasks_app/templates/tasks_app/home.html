@@ -4,40 +4,269 @@
 
 {% block content %}
 
-<h1 style = 'font-size:80px; color:yellow'> Welcome to LeBron To-Do List! </h1>
+<style>
+    :root {
+        --yellow: #f5c518;
+        --black: #0b0b0b;
+        --card-bg: #161616;
+        --border-dark: #2a2a2a;
+        --text-main: #f1f1f1;
+        --text-muted: #9a9a9a;
+    }
 
-{% if user.is_authenticated %}
-<h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
-<form method='get' action="{% url 'home' %}"> 
-    <label for='classification' style='color:yellow; font-size:20px;'> Specify Classification </label>
-    <select name='classification' id='classification' onchange='this.form.submit()'>
-        <option value="">View All</option>
-        {% for cls in classification %}
-            <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
-                {{ cls.name }}
-            </option>
-        {% endfor %}
-    </select>
-</form>
-<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
-    <p style = 'font-size:30px; color:yellow; margin-left:20px; margin-bottom:20px;'>
-    Total Tasks: {{ total_tasks }}
-    </p>
-</div>
-<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
-    <p style = 'font-size:30px; color:yellow; margin-left:20px;'>
-    Tasks Completed: {{ tasks_completed }}
-    </p>
-</div>
-<div style="width:400px; height:50px; background: rgba(92, 90, 80, 1); border-radius:20px; margin-bottom:20px;">
-    <p style = 'font-size:30px; color:yellow; margin-left:20px;'>
-    Tasks Incomplete: {{ tasks_incomplete }}
-    </p>
-</div>
-{% else %}
-<h2 style = 'font-size:50px; color:yellow'> Current Progress: </h2>
-<p style = 'font-size:30px; color:yellow'> Please log in to view your tasks progress. </p>
+    /* ================= ANIMATIONS ================= */
 
-{% endif %}
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-{%endblock%}
+    @keyframes fillBar {
+        from { width: 0%; }
+        to { width: var(--progress); }
+    }
+
+    @keyframes floatTitle {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* ================= LAYOUT ================= */
+
+    .page-container {
+        max-width: 900px;
+        margin: 70px auto;
+        padding: 0 20px;
+        animation: fadeSlideIn 0.6s ease-out;
+    }
+
+    .page-title {
+        font-size: 64px;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 40px;
+        text-align: center;
+        animation: floatTitle 4s ease-in-out infinite;
+    }
+
+    .page-title .accent {
+        display: inline-block;
+        background: linear-gradient(270deg, #FFD700, #FFC700, #FFD700);
+        background-size: 600% 600%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 6s ease infinite;
+    }
+
+    .section-title {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: var(--text-main);
+    }
+
+    /* ================= FILTER ================= */
+
+    .filter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 30px;
+    }
+
+    .filter-form label {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    .filter-form select {
+        width: 240px;
+        padding: 10px 12px;
+        background: var(--card-bg);
+        color: var(--text-main);
+        border-radius: 10px;
+        border: 1px solid var(--border-dark);
+        transition: border 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .filter-form select:focus {
+        outline: none;
+        border-color: var(--yellow);
+        box-shadow: 0 0 0 3px rgba(245,197,24,0.15);
+    }
+
+    /* ================= PROGRESS BAR ================= */
+
+    .progress-card {
+        background: var(--card-bg);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border-dark);
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: var(--text-main);
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 14px;
+        background: #0f0f0f;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--yellow), #ffd84d);
+        width: 0%;
+        animation: fillBar 0.8s ease-out forwards;
+    }
+
+    /* ================= STATS ================= */
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        padding: 24px;
+        border-radius: 16px;
+        border-left: 5px solid var(--yellow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .stat-number {
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--yellow);
+        margin: 0;
+    }
+
+    .stat-label {
+        font-size: 16px;
+        color: var(--text-muted);
+        margin-top: 6px;
+    }
+
+    .login-warning {
+        font-size: 20px;
+        color: var(--text-muted);
+    }
+
+    /* ================= NAVBAR LABELS ================= */
+
+    .nav-label {
+        font-size: 12px;
+        margin-top: 4px;
+        color: var(--text-main);
+        opacity: 0.75;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item:hover .nav-label {
+        color: var(--yellow);
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+
+    .nav-item img {
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .nav-item:hover img {
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 6px var(--yellow));
+    }
+</style>
+
+<!-- ================= PAGE CONTENT ================= -->
+
+<div class="page-container">
+    <h1 class="page-title">
+        Welcome to <span class="accent">LeBron</span> To-Do List
+    </h1>
+
+    {% if user.is_authenticated %}
+        <h2 class="section-title">Current Progress</h2>
+
+        <form method="get" action="{% url 'home' %}" class="filter-form">
+            <label for="classification">Filter by classification</label>
+            <select name="classification" id="classification" onchange="this.form.submit()">
+                <option value="">View All</option>
+                {% for cls in classification %}
+                    <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
+                        {{ cls.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <div class="progress-card">
+            <div class="progress-header">
+                <span>Completion</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-number" id="total">{{ total_tasks }}</p>
+                <p class="stat-label">Total Tasks</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-number" id="completed">{{ tasks_completed }}</p>
+                <p class="stat-label">Completed</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-number">{{ tasks_incomplete }}</p>
+                <p class="stat-label">Incomplete</p>
+            </div>
+        </div>
+
+    {% else %}
+        <h2 class="section-title">Current Progress</h2>
+        <p class="login-warning">Please log in to view your tasks progress.</p>
+    {% endif %}
+</div>
+
+<script>
+    const total = parseInt(document.getElementById("total")?.innerText || 0);
+    const completed = parseInt(document.getElementById("completed")?.innerText || 0);
+    let percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    const fill = document.getElementById("progress-fill");
+    const text = document.getElementById("progress-text");
+    if (fill) {
+        fill.style.setProperty("--progress", percent + "%");
+        fill.style.width = percent + "%";
+    }
+    if (text) {
+        text.innerText = percent + "%";
+    }
+</script>
+
+{% endblock %}

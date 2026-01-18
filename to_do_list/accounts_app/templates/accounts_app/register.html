@@ -1,16 +1,47 @@
-{%extends "templates/base.html"%}
-
-{# Register Form #}
-{# This is the form that will be used to register a new user #}
-{# It will be passed in from the view #}
+{% extends "templates/base.html" %}
 
 {% block title %}Register a New User{% endblock %}
 
 {% block content %}
-<form action = "/accounts/register/" method = "post" style="color:yellow;">
-    <!-- The CSRF token is required for security reasons -->
-    {% csrf_token %}
-    {{ form }}
-    <button>Submit</button>
-</form>
+<div style="max-width: 450px; margin: 0 auto; position: relative; z-index:2;">
+    <!-- Header -->
+    <h2 style="
+        color: #FFD700; 
+        text-align: center; 
+        margin-bottom: 1.5rem; 
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    ">Create Your Account</h2>
+
+    <!-- Form Container -->
+    <form action="/accounts/register/" method="post" style="
+        background-color: #1a1a1a;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+        color: #f0f0f0; /* Main form text color */
+    ">
+        {% csrf_token %}
+
+        <!-- Django Form Fields -->
+        {{ form }}
+
+        <!-- Submit Button -->
+        <button type="submit" style="
+            width: 100%;
+            background-color: #FFD700;
+            color: #111;
+            font-weight: bold;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        " 
+        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 15px rgba(255,215,0,0.5)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+            Submit
+        </button>
+    </form>
+</div>
 {% endblock %}

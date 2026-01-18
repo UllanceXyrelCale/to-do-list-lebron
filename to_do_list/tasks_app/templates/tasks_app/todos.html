@@ -1,49 +1,267 @@
 {% extends 'templates/base.html' %}
-{%load static%}
+{% load static %}
 
 {% block title %}Add a Task{% endblock %}
 
 {% block content %}
-<h1 style='font-size:40px; color:yellow'>{{current_classification}}</h1>
-<a style = 'color:yellow;' href="{% url 'add-classifications' %}"><img src='{%static "Add Tasks Button.png" %}'width=25 height=25> Edit Classification </a>
 
+<style>
+    :root {
+        --yellow: #f5c518;
+        --black: #0b0b0b;
+        --card-bg: #161616;
+        --border-dark: #2a2a2a;
+        --text-main: #f1f1f1;
+        --text-muted: #9a9a9a;
+        --desc-color: #eeb8ff;
+        --btn-bg: #222222;
+        --btn-hover: rgba(245,197,24,0.15);
+    }
 
-<form method="get" action="{% url 'todos' %}">
-    <label for="classification" style='color:yellow; font-size:20px;'>Select Classification:</label>
-    <select name="classification" id="classification" onchange="this.form.submit()">
-      <option value="">View All</option>
-        {% for cls in classification %}
-            <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
-                {{ cls.name }}
-            </option>
-        {% endfor %}
-    </select>
-</form>
+    /* ================= ANIMATIONS ================= */
 
-<a style = 'color:yellow;' href="{% url 'add-todos' %}"><img src='{%static "Add Tasks Button.png" %}'width=25 height=25> Add Tasks </a>
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-<div style="width:800px; min-height:500px; background-color: #878787ff; border:5px solid #636363ff; border-radius:50px">
-    <ul style='font-size:18px; color:yellow; margin-top:20px'>
-        {% for todo in todos %}
-        <li>
-        {%if todo.completed %}
-        <a href="{% url 'incomplete-todo' todo.id %}">
-        <img src='{% static "Lebron Happy.jpg" %}' width=75 height=50> 
+    @keyframes pulseGlow {
+        0% { box-shadow: 0 0 0 rgba(245,197,24,0); }
+        50% { box-shadow: 0 0 12px rgba(245,197,24,0.2); }
+        100% { box-shadow: 0 0 0 rgba(245,197,24,0); }
+    }
+
+    @keyframes btnHoverPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* ================= LAYOUT ================= */
+
+    .page-container {
+        max-width: 1000px;
+        margin: 70px auto;
+        padding: 0 20px;
+        animation: fadeSlideIn 0.6s ease-out;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        font-size: 44px;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: 0.5px;
+    }
+
+    .accent {
+        color: var(--yellow);
+    }
+
+    /* ================= ACTION BUTTONS ================= */
+
+    .action-links {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+    }
+
+    .action-links a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--btn-bg);
+        color: var(--yellow);
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border-dark);
+        transition: all 0.25s ease;
+        box-shadow: 0 0 0 rgba(245,197,24,0);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-links a:hover {
+        background: var(--btn-hover);
+        transform: translateY(-2px);
+        animation: btnHoverPulse 0.6s ease infinite;
+    }
+
+    .action-links a img {
+        filter: drop-shadow(0 0 3px var(--yellow));
+        transition: transform 0.25s ease;
+    }
+
+    .action-links a:hover img {
+        transform: scale(1.2);
+    }
+
+    /* ================= FILTER ================= */
+
+    .filter-form {
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .filter-form label {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    .filter-form select {
+        padding: 10px 16px;
+        background: var(--card-bg);
+        color: var(--text-main);
+        border-radius: 12px;
+        border: 1px solid var(--border-dark);
+        font-weight: 600;
+        cursor: pointer;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .filter-form select:focus {
+        outline: none;
+        border-color: var(--yellow);
+        box-shadow: 0 0 0 4px rgba(245,197,24,0.15);
+    }
+
+    /* ================= TODO CONTAINER ================= */
+
+    .todo-container {
+        background: linear-gradient(180deg, #1a1a1a, #121212);
+        border-radius: 26px;
+        padding: 30px;
+        border: 1px solid var(--border-dark);
+        animation: pulseGlow 1.2s ease-out;
+    }
+
+    .todo-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* ================= TODO ITEMS ================= */
+
+    .todo-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--border-dark);
+        opacity: 0;
+        animation: fadeSlideIn 0.4s ease forwards;
+        transition: background 0.15s ease, padding-left 0.15s ease;
+    }
+
+    .todo-item:nth-child(1) { animation-delay: 0.05s; }
+    .todo-item:nth-child(2) { animation-delay: 0.10s; }
+    .todo-item:nth-child(3) { animation-delay: 0.15s; }
+    .todo-item:nth-child(4) { animation-delay: 0.20s; }
+    .todo-item:nth-child(5) { animation-delay: 0.25s; }
+
+    .todo-item:hover {
+        background: rgba(255,255,255,0.03);
+        padding-left: 6px;
+    }
+
+    .todo-item:last-child { border-bottom: none; }
+
+    .todo-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 18px;
+        color: var(--text-main);
+    }
+
+    .todo-main a img {
+        vertical-align: middle;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .todo-main a img:hover {
+        transform: scale(1.12);
+        opacity: 0.85;
+    }
+
+    .todo-desc {
+        font-size: 15px;
+        color: var(--desc-color);
+        margin-left: 90px;
+        line-height: 1.4;
+    }
+</style>
+
+<div class="page-container">
+
+    <div class="page-header">
+        <h1 class="page-title">
+            <span class="accent">{{ current_classification }}</span>
+        </h1>
+    </div>
+
+    <div class="action-links">
+        <a href="{% url 'add-classifications' %}">
+            <img src="{% static 'Add Tasks Button.png' %}" width="24" height="24">
+            Edit Classification
         </a>
 
-        {%else%} 
-        <a href="{% url 'complete-todo' todo.id %}">
-        <img src='{% static "Lebron Sad.jpg" %}' width=75 height=50> 
+        <a href="{% url 'add-todos' %}">
+            <img src="{% static 'Add Tasks Button.png' %}" width="24" height="24">
+            Add Task
         </a>
+    </div>
 
-        {%endif%}
-        {{todo.title}} 
-        <a href="{% url 'remove-todo' todo.id %}">
-        <img src='{% static "Delete Task Button.png" %}' width=20px height=20px title='Remove Task'>
-        </a>
-        <p style = 'color:rgba(238, 184, 255, 1); font-size:16px;'>{{todo.description}}</p>
-        </li>
-        {%endfor%}
-    </ul>
+    <form method="get" action="{% url 'todos' %}" class="filter-form">
+        <label for="classification">Filter by classification</label>
+        <select name="classification" id="classification" onchange="this.form.submit()">
+            <option value="">View All</option>
+            {% for cls in classification %}
+                <option value="{{ cls.id }}" {% if cls.id == selected_classification %}selected{% endif %}>
+                    {{ cls.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="todo-container">
+        <ul class="todo-list">
+            {% for todo in todos %}
+                <li class="todo-item">
+                    <div class="todo-main">
+                        {% if todo.completed %}
+                            <a href="{% url 'incomplete-todo' todo.id %}">
+                                <img src="{% static 'Lebron Happy.jpg' %}" width="75" height="50">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'complete-todo' todo.id %}">
+                                <img src="{% static 'Lebron Sad.jpg' %}" width="75" height="50">
+                            </a>
+                        {% endif %}
+
+                        {{ todo.title }}
+
+                        <a href="{% url 'remove-todo' todo.id %}">
+                            <img src="{% static 'Delete Task Button.png' %}" width="18" height="18" title="Remove Task">
+                        </a>
+                    </div>
+
+                    <p class="todo-desc">{{ todo.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
 </div>
-{%endblock%}
+
+{% endblock %}

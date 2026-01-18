@@ -1,34 +1,165 @@
 {% extends 'templates/base.html' %}
-{%load static%}
+{% load static %}
 
-<head>
-    <link rel='stylesheet' href="{% static 'css/global_style.css' %}">
-</head>
-
-{% block title %}Add a Task{% endblock %}
+{% block title %}Add a Classification{% endblock %}
 
 {% block content %}
 
-<h1 style='font-size:40px; color:yellow'>Add a Classification</h1>
+<style>
+    :root {
+        --yellow: #f5c518;
+        --dark-bg: #0f0f0f;
+        --card-bg: #1c1c1c;
+        --border-dark: #2a2a2a;
+        --text-main: #eaeaea;
+        --text-muted: #9a9a9a;
+    }
 
-<form method='POST' style= 'color:yellow;'>
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type='submit'> Add Classification </button>
-</form>
+    .page-container {
+        max-width: 800px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
 
-<div style='margin-top:20px; color:rgba(148, 136, 136, 1);;'>
-<h2 style='font-size:30px; color:yellow;'>Current Classifications</h2>
-<ul style='font-size:18px; color:yellow;'>
-    {% for cls in classifications %}
-    <li>
-      {{cls.name}} 
-      <a href="{% url 'remove-classification' cls.id%}">
-      <img src='{% static "Delete Task Button.png" %}' width=20px height=20px title='Remove Task'>
-      </a>
-    </li>
-    {%endfor%}
-</ul>
+    .page-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 30px;
+    }
+
+    .page-title span {
+        color: var(--yellow);
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid var(--border-dark);
+        margin-bottom: 40px;
+    }
+
+    form p {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        font-size: 16px;
+    }
+
+    form label {
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+
+    form input {
+        padding: 10px 12px;
+        background: #111;
+        color: var(--text-main);
+        border-radius: 8px;
+        border: 1px solid var(--border-dark);
+        font-size: 15px;
+    }
+
+    form input:focus {
+        outline: none;
+        border-color: var(--yellow);
+    }
+
+    .submit-btn {
+        margin-top: 10px;
+        padding: 12px;
+        width: 100%;
+        background: var(--yellow);
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 197, 24, 0.35);
+    }
+
+    .list-card {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid var(--border-dark);
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 15px;
+        color: var(--text-main);
+    }
+
+    .classification-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .classification-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-dark);
+        font-size: 18px;
+        color: var(--text-main);
+    }
+
+    .classification-item:last-child {
+        border-bottom: none;
+    }
+
+    .delete-btn img {
+        cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        opacity: 0.8;
+    }
+</style>
+
+<div class="page-container">
+
+    <h1 class="page-title">
+        Add a <span>Classification</span>
+    </h1>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Add Classification</button>
+        </form>
+    </div>
+
+    <div class="list-card">
+        <h2 class="section-title">Current Classifications</h2>
+
+        <ul class="classification-list">
+            {% for cls in classifications %}
+                <li class="classification-item">
+                    {{ cls.name }}
+                    <a href="{% url 'remove-classification' cls.id %}" class="delete-btn">
+                        <img src="{% static 'Delete Task Button.png' %}"
+                             width="18" height="18"
+                             title="Remove Classification">
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
 </div>
 
-{%endblock%}
+{% endblock %}
